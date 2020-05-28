@@ -1,0 +1,37 @@
+{
+  "name": "wikiracer8000",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/captainrex8/wikiracer8000.git",
+  "author": "Rex Chen <rex@panoridge.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "jest": {
+    "verbose": true,
+    "resetMocks": true,
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/config/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "tests",
+      "node_modules",
+      "config"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
+  }, 
+  "devDependencies": {
+    "jest": "^26.0.1"
+  }
+}

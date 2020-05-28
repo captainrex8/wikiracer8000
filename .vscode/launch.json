@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run",
+            "runtimeVersion": "12.17.0",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "program": "${file}",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Test",
+            "runtimeVersion": "12.17.0",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+            "args": [
+                "${file}",
+                "--detectOpenHandles"
+            ],
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
