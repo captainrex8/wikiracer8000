@@ -5,7 +5,7 @@
   "repository": "https://github.com/captainrex8/wikiracer8000.git",
   "author": "Rex Chen <rex@panoridge.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node index.js"
   },
