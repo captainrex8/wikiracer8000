@@ -1,7 +1,7 @@
 'use strict';
 
 const pacakge = require('./package.json');
-const server = require('express')();
+const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('config');
 const path = require('path');
@@ -10,16 +10,30 @@ const compression = require('compression');
 const logger = require('./app/logger');
 const routes = require('./app/routes');
 
+const server = express();
 const MAX_REQUEST_SIZE = config.get('express.maxRequestSize');
 const PORT = config.get('express.port');
 
-server.use(helmet());
-server.use(compression({ threshold: 0 }));
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json({ limit: MAX_REQUEST_SIZE }));
-server.use('/api/v1', routes);
+const uncaughtExceptionHandler = (error) => {
+    logger.fatal({ error });
+    process.exit(1);
+};
 
-const startServer = (port) => {
+const unhandledRejectionHandler = ({ message, stack}) => {
+    logger.warn({
+        isUnhandledRejection: true,
+        message,
+        stack
+    });
+};
+
+const initServer = (port) => {
+    server.use(helmet());
+    server.use(compression({ threshold: 0 }));
+    server.use(bodyParser.urlencoded({ extended: true }));
+    server.use(bodyParser.json({ limit: MAX_REQUEST_SIZE }));
+    server.use('/api/v1', routes);
+
     return new Promise((resolve, reject) => {
         server.listen(port, (err) => {
             err ? reject(err) : resolve();
@@ -28,8 +42,12 @@ const startServer = (port) => {
 }
 
 const start = async () => {
+    process.on('uncaughtException', uncaughtExceptionHandler);
+    process.on('unhandledRejection', unhandledRejectionHandler);
+
     logger.info(`starting ${config.get('serviceName')} v${pacakge.version} on port ${PORT}...`);
-    await startServer(PORT);
+    await initServer(PORT);
+    logger.info('started. listening on traffic ...');
 };
 
 start();

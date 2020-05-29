@@ -1,0 +1,7 @@
+{
+    "serviceName": "wikiracer8000",
+    "express": {
+        "port": 8089,
+        "maxRequestSize": "50mb"
+    }
+}
