@@ -3,5 +3,9 @@
     "express": {
         "port": 8089,
         "maxRequestSize": "50mb"
+    },
+    "mediaWikiApi": {
+        "baseUrl": "https://en.wikipedia.org/w/api.php",
+        "timeoutInSeconds": 20
     }
 }
