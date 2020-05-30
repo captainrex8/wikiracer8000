@@ -1,11 +1,18 @@
 'use strict';
 
-const log = (stuff) => console.log(stuff);
+const config = require('config');
+const winston = require('winston');
 
-module.exports = {
-    debug: log,
-    info: log,
-    warn: log,
-    error: log,
-    fatal: log
-};
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console({
+            level: config.get('logger.level'),
+            format: winston.format.combine(
+                winston.format.colorize(),
+                winston.format.simple()
+            )
+        })
+    ]
+});
+
+module.exports = logger;

@@ -4,11 +4,11 @@ const pacakge = require('./package.json');
 const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('config');
-const path = require('path');
 const helmet = require('helmet');
 const compression = require('compression');
 const logger = require('./app/logger');
 const routes = require('./app/routes');
+const errorHandlerMiddleware = require('./app/mw-error-handler');
 
 const server = express();
 const MAX_REQUEST_SIZE = config.get('express.maxRequestSize');
@@ -33,6 +33,7 @@ const initServer = (port) => {
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(bodyParser.json({ limit: MAX_REQUEST_SIZE }));
     server.use('/api/v1', routes);
+    server.use(errorHandlerMiddleware);
 
     return new Promise((resolve, reject) => {
         server.listen(port, (err) => {

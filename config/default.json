@@ -1,5 +1,11 @@
 {
     "serviceName": "wikiracer8000",
+    "settings": {
+        "numConcurrentSearches": 5
+    },
+    "logger": {
+        "level": "info"
+    },
     "express": {
         "port": 8089,
         "maxRequestSize": "50mb"

@@ -4,8 +4,25 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run",
+            "name": "Start",
+            "outputCapture": "std",
             "runtimeVersion": "12.17.0",
+            "disableOptimisticBPs": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "program": "${workspaceRoot}/index.js",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run file",
+            "runtimeVersion": "12.17.0",
+            "disableOptimisticBPs": true,
             "skipFiles": [
                 "<node_internals>/**"
             ],
@@ -20,6 +37,7 @@
             "request": "launch",
             "name": "Test",
             "runtimeVersion": "12.17.0",
+            "disableOptimisticBPs": true,
             "skipFiles": [
                 "<node_internals>/**"
             ],
