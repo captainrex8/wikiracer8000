@@ -2,7 +2,9 @@
 
 const get = (req, res) => {
     res.json({
-        data: 'I am still alive! ASFASFA'
+        data: {
+            message: 'I am still alive!'
+        }
     });
 };
 

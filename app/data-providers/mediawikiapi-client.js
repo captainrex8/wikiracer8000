@@ -32,8 +32,16 @@ class MediaWikiApiCleint {
             }
         );
 
-        this._logger.debug(JSON.stringify(response.data));
-        this._logger.info(response.request.path);
+        this._logger.debug({
+            module: 'mediawikiapi-client',
+            response: {
+                data: response.data
+            }
+        });
+        this._logger.debug({
+            module: 'mediawikiapi-client',
+            url: this._baseUrl + response.request.path
+        });
     
         return response.data;
     }

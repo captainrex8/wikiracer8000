@@ -1,7 +1,7 @@
 {
     "serviceName": "wikiracer8000",
     "settings": {
-        "numConcurrentSearches": 5
+        "numConcurrentSearches": 50
     },
     "logger": {
         "level": "info"

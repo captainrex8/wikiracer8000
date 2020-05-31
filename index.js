@@ -27,6 +27,23 @@ const unhandledRejectionHandler = ({ message, stack}) => {
     });
 };
 
+const makeErrorSerializable = () => {
+    if (!('toJSON' in Error.prototype))
+    Object.defineProperty(Error.prototype, 'toJSON', {
+        value: function () {
+            var alt = {};
+
+            Object.getOwnPropertyNames(this).forEach(function (key) {
+                alt[key] = this[key];
+            }, this);
+
+            return alt;
+        },
+        configurable: true,
+        writable: true
+    });
+}
+
 const initServer = (port) => {
     server.use(helmet());
     server.use(compression({ threshold: 0 }));
@@ -45,6 +62,8 @@ const initServer = (port) => {
 const start = async () => {
     process.on('uncaughtException', uncaughtExceptionHandler);
     process.on('unhandledRejection', unhandledRejectionHandler);
+
+    makeErrorSerializable();
 
     logger.info(`starting ${config.get('serviceName')} v${pacakge.version} on port ${PORT}...`);
     await initServer(PORT);
