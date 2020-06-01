@@ -108,11 +108,22 @@ The more relevant log entries are the last two lines. These are race progress lo
 
 ## What the code does
 
-e.g. Flow diagram and stuff
+![Code flow 1](docs/wikiracer8000_codeflow1.png)
 
-### Arch for error handling and logging
+Once the user submit a request, the race will kick off by having the wikirace module putting the first title search onto the search queue.
 
-e.g. error handling middle ware / app level error handling and logs accompanied with it
+![Code flow 2](docs/wikiracer8000_codeflow2.png)
+
+Then launch a search worker to querying MediaWiki API for all linked titles to the starting title. Once we got the titles, the search worker will use the selection module to randomly pick a number of titles to search next and put them on the queue.
+
+![Code flow 3](docs/wikiracer8000_codeflow3.png)
+
+The wikirace module will then keep taking a number of searches off the queue at a time and launch search workers to look for the end title.
+
+The race will stop on either one of the following conditions:
+- We've done the race and are now at the last title before the end
+- There is no more queued searches (complete dead end everywhere)
+- We searched enough pages and it is time to call it quit.
 
 ## References
 
@@ -157,56 +168,136 @@ Configs are stored under the `config` folder. Each file represents a config for 
 |mediaWikiApi.baseUrl             | base URL for the MediaWiki API query end point            | string  |
 |mediaWikiApi.timeoutInSeconds    | http request timeout in seconds                           | number  |
 
+### API end-points
 
-## Strategies you tried
+#### /api/v1/ping
+
+Method: GET
+
+Sample 200 OK Response:
+
+```
+{
+  "data": {
+    "message":"I am still alive!"
+  }
+}
+```
+
+#### /api/v1/race
+
+Method: POST
+
+Sample Request:
+
+```
+{
+  "start":"Giant sloth",
+  "end":"Sloth"
+}
+```
+
+Sample HTTP 200 OK Response:
+
+```
+{
+  "data": {
+    "startTitle":"Giant sloth",
+    "endTitle":"Sloth",
+    "path": [
+      "Giant sloth - 233ms",
+      "Ground sloth - 590ms",
+      "Sloth"
+    ]
+  }
+}
+```
+
+Sample HTTP 400 Bad Request Response:
+
+```
+{
+  "error": {
+    "id": "acc6be12-a792-42af-a023-8c61d47ca3d1",
+    "message": "Unexpected string in JSON at position 42"
+  }
+}
+```
+
+## Strategies tried
 
 ![Strategies](docs/wikiracer8000_strategies.png)
 
 ### 1. Always pick first
 
+Always pick the first linked title to search. This is mostly a test to see if the MediaWikiApi client is functioning correctly. When testing with sample race (Tennessee -> Sloth), it goes no where and always end up in loops.
+
 ### 2. Breadth first
+
+Query all the linked titles for a given titles and iterating through them before going to the next level. The exahustive approach without parallelization is taking forever to go through everything. In the end, racing with this approach is not practical.
 
 ### 3. Parallelized depth first
 
+This approach start out with a select number of linked titles and then launch the searches in parallel. The parallelization is small. I configured only 5 starting titles to search. In each parallel search, the search worker will randomly pick 1 linked title to search next. While this approach has increased speed, the race still didn't end. I did not investigate this approach further.
+
 ### 4. Paralleized breadth first
 
-### 5. Paralleized breadth frist with randomization
+This approach is similar to No. 2. Instead of going through titles one by one, I search X titles at a time and search directly linked titles first before going to next level. Since amount of parallelization is configurable, I managed to go through large number of titles faster. However, due to the sheer number of titles even at level 1, the race still end up going no where. Not to mention the levels further down will exponentially more titles. This approach doesn't get us far enough fast enough from the starting point.
 
-## How long you spent on each part of the project
+### 5. Paralleized breadth first with randomization
 
-May 28 – 4 hours
+This is a modified approach similar to No. 4. Instead of queueing ALL linked titles for searching, the race now randomly pick X titles and queue them. This improves on the distance traversed within a given time. This is the current appraoch and by luck I was able to go from (Tennessee -> Sloth) a couple of times. Unfortunately, due to the random nature, the race is not consisten and has a lot of variability.
 
-Understand problem scope, research APIs: MediaWiki API, Design, scaffolding, setting up dev environment.
+### Other strategies tried
 
-May 29 – 2 hours
+Other than parallelizing the searches, I also experimented several approaches on title selection. As intelligently selecting the right title would cut down the amount searches needed:
 
-Play around with the MediaWiki API and see its capabilities. Implement first draft client. Design and test out a first-take solution that works.
+- Always check to see if the current title is directly linked to the end title before retrieving all linked titles.
+- Do not search anything containing starting title.
+- Tried to not search titles which have been searched.
+- Check to see if MediaWiki API can provide a category on a title.
 
-May 30 – 6 hours
+## How long I've spent on each part of the project?
 
-Test it out: Brute force pick first title go depth first search all the way. - DOESN’T WORK
+### MAY28
 
-Is there a way to query linked titles using keyword/prefix? - NOPE
+- Understand problem scope
+- Research APIs: MediaWiki API
+- Design
+- Project scaffolding
+- Setting up dev environment
+- Time spent: *4 hours*
 
-If not, we could retrieve all the links and search keyword - DONE
+### MAY29
 
-If not found, maybe we could look up the category/topics for the keyword and search – DOESN’T WORK
+- Play around with the MediaWiki API and probe its capabilities
+- Implement API client
+- Hookup API endpoint to query a single title using the client
+- Design
+- Time spent: *3 hours*
 
-If nothing related, then just either randomly pick 1 or pick first one - DONE
+### MAY30
 
-May 31 – 8 hours
+- Trying out different strategies
+- Building out wiki racer, search worker
+- Writing unit tests
+- Time spent: *6 hours*
 
-Wrap up first implementation of the racer in monolith design.
+### MAY31
 
-Test it out: Pick 5 random starting points and pick a random page for each subsequent linked pages. - didn’t work as planned
+- Trying out different strategies
+- Building out wiki racer, search worker
+- Writing unit tests
+- Wrap up implementation of the first design (monolith)
+- Time spent: *8 hours*
 
-Test it out: Fan out and search in binary tree fashion. For each page, randomly pick 2 linked pages – didn’t work as planned
+### JUNE01
 
-Test it out: Randomly pick configurable number of links and start going through each one and queuing same amount of links for each page. - The approach was able to return result in a reasonable amount of time a couple times. However, it is not reproducible on a consistent manner.
-
-June 01 - 4 hours
-
-Documentations and recording demo
+- Documentation
+- A bit of refactoring of first design
+- Forward looking: designing iteration 2
+- Recording a short demo
+- Time spent: *6 hours*
 
 ## Issues and Iteration 2
 
@@ -217,3 +308,8 @@ Documentations and recording demo
 - Sometimes the application can go into infinite loop among several titles.
 - No authentication/throttling to for the api
 - No friendly UI :(
+
+### Iteration 2:
+- Swagger API docs
+- UI and API authentication/throttling
+- Split out race creation and actual racing.
