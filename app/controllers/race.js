@@ -30,13 +30,14 @@ const post = async (req, res, next) => {
             return;
         }
 
-        const result = await wikiracer.race(fromTitle, toTitle);
+        const journey = await wikiracer.race(fromTitle, toTitle);
     
         res.json({
             data: {
                 fromTitle,
                 toTitle,
-                ...result
+                message: journey.length ? 'race complete!' : 'race failed :(',
+                journey
             }
         });
     } catch (err) {

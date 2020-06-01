@@ -66,6 +66,19 @@ const _logSearchResult = (searchId, ts, numInQueue) => {
     logger.info(`${idStr} ${parent} -> ${ts.title} | ${ts.duration}ms | Queued: ${numInQueue}`);
 }
 
+const _getJourney = (searched, lastTitle) => {
+    const lastTitleSearch = searched.get(lastTitle);
+    const path = [...lastTitleSearch.parents];
+    path.push(lastTitle);
+    const journey = path.map((p) => {
+        const ts = searched.get(p);
+        return `${p} - ${ts.duration}ms`;
+    });
+    journey.push(lastTitleSearch.destination);
+
+    return journey;
+};
+
 const race = async (start, destination) => {
     const searched = new Map();
 
@@ -73,10 +86,10 @@ const race = async (start, destination) => {
     const NUM_MAX_SEARCHES = config.get('settings.numMaxSearches');
 
     let searchId = 0;
-    let destinationParent = '';
+    let lastTitle = '';
     let toSearch = [new TitleSearch(start, start, [], destination)];
 
-    while(!destinationParent && toSearch.length && searchId < NUM_MAX_SEARCHES) {
+    while(!lastTitle && toSearch.length && searchId < NUM_MAX_SEARCHES) {
         const searches = toSearch.splice(0, NUM_CONCURRENT_SEARCHES);
         const promises = searches.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
         const results = await Promise.all(promises);
@@ -85,7 +98,7 @@ const race = async (start, destination) => {
             searched.set(ts.title, ts);
 
             if (ts.searchNext.some((title) => title === destination)) {
-                destinationParent = ts.title;
+                lastTitle = ts.title;
             } else {
                 ts.searchNext.forEach((next) => {
                     const parents = [...ts.parents];
@@ -102,14 +115,9 @@ const race = async (start, destination) => {
         });
     }
 
-    let path = [];
-    if (destinationParent) {
-        path = [...searched.get(destinationParent).parents];
-        path.push(destinationParent);
-        path.push(destination);
-    }
+    let journey = lastTitle ? _getJourney(searched, lastTitle) : [];
 
-    return { path };
+    return journey;
 };
 
 module.exports = {
