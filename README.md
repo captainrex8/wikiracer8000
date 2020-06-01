@@ -4,6 +4,8 @@ Wikiracer takes a starting page and an end page (as a page title) and successful
 
 ## High-level architecture overview
 
+![High level architecture](docs/wikiracer8000_architecture.png)
+
 ### Arch for the racing
 
 e.g. searches and queues and parallel calls
