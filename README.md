@@ -16,6 +16,8 @@ To start, obtain the source code from the following repository through git clone
 
 Make sure you have *docker*, *docker-compose* and *make*.
 
+### Sanity check
+
 The first step is to run the tests by running `make test`. This will build the test container and run the unit tests.
 
 Then you could launch the application container by running `make build-run`.
@@ -41,6 +43,10 @@ curl --header "Content-Type: application/json" \
 
 You should get the follwoing response given the wiki pages hasn't changed much: `{"data":{"fromTitle":"Giant sloth","toTitle":"Sloth","path":["Giant sloth","Ground sloth","Sloth"]}}`
 
+### A little bit more info on ...
+
+#### Client side
+
 Now you've completed the application start up sanity check. You could start racing by changing the POST body and send it to the `race` end point. There are just 2 required parameters:
 
 ```
@@ -53,6 +59,8 @@ Now you've completed the application start up sanity check. You could start raci
 `from` represents the wiki title you would like to start racing from and `to` represents the wiki title you would like the race to end at. Here's the Giant sloth to Sloth example using Postman:
 
 ![Postman](docs/postman1.png)
+
+#### Server side
 
 At the same time, you could check the running container for log outputs. Here's the container log output from the Giant sloth to Sloth example:
 
