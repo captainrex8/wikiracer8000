@@ -1,3 +1,4 @@
+
 jest.mock('../../../app/logger');
 
 const logger = require('../../../app/logger');
@@ -12,6 +13,8 @@ const getClientConfig = () => ({
     logger
 });
 
+// NOTE: This is not a pure unit test.
+//       This test actually interacts with MediaWikiApi.
 describe('mediawikiapi-client', () => {
     describe('queryLinks', () => {
         it('should retrieve query result', async () => {

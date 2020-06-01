@@ -15,11 +15,11 @@ const logger = winston.createLogger({
     ]
 });
 
-// const log = (level, item) => logger[level](typeof item === 'string' ? item : JSON.stringify(item, null, 2));
+const log = (level, item) => logger[level](typeof item === 'string' ? item : JSON.stringify(item, null, 2));
 // const log = (level, item) => console.log(typeof item === 'string' ? item : JSON.stringify(item, null, 2));
-const log = (level, item) => console.log(item);
+// const log = (level, item) => console.log(item);
 
-const debug = () => {};
+const debug = (item) => log('debug', item);
 const info = (item) => log('info', item);
 const warn = (item) => log('warn', item);
 const error = (item) => log('error', item);

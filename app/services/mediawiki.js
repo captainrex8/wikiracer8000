@@ -62,23 +62,7 @@ const getAllLinkedTitles = async (title) => {
     return allLinks;
 };
 
-const getFirstPageOfLinkedTitles = async (title) => {
-    if (!title) {
-        throw new Error('title cannot be empty');
-    }
-
-    let data = await client.queryLinks(
-        title,
-        null,
-        100
-        // MediaWikiApiCleint.LIMIT_MAX
-    );
-
-    return _getLinks(data);
-};
-
 module.exports = {
     isLinked,
-    getAllLinkedTitles,
-    getFirstPageOfLinkedTitles
+    getAllLinkedTitles
 };
