@@ -26,14 +26,14 @@ const _selectTitles = (titles, numToSelect) => {
 };
 
 const _search = async (titleSearch, numToSelect) => {
-    const { title, destination } = titleSearch;
+    const { title, end } = titleSearch;
 
     try {
         const start = new Date();
-        const isLinkedToDestination = await mediawiki.isLinked(title, destination);
+        const isLinkedToend = await mediawiki.isLinked(title, end);
 
-        if (isLinkedToDestination) {
-            titleSearch.searchNext.push(titleSearch.destination);
+        if (isLinkedToend) {
+            titleSearch.searchNext.push(titleSearch.end);
             const end = new Date();
             titleSearch.duration = end - start;
 
@@ -74,12 +74,12 @@ const _getJourney = (searched, lastTitle) => {
         const ts = searched.get(p);
         return `${p} - ${ts.duration}ms`;
     });
-    journey.push(lastTitleSearch.destination);
+    journey.push(lastTitleSearch.end);
 
     return journey;
 };
 
-const race = async (start, destination) => {
+const race = async (start, end) => {
     const searched = new Map();
 
     const NUM_CONCURRENT_SEARCHES = config.get('settings.numConcurrentSearches');
@@ -87,8 +87,12 @@ const race = async (start, destination) => {
 
     let searchId = 0;
     let lastTitle = '';
-    let toSearch = [new TitleSearch(start, start, [], destination)];
+    let toSearch = [new TitleSearch(start, start, [], end)];
 
+    // NOTE: The race will stop either:
+    //       - We are at the last title before the destionation
+    //       - There is nothing more to search (complete dead end everywhere)
+    //       - We searched long enough and it is time to call it quit
     while(!lastTitle && toSearch.length && searchId < NUM_MAX_SEARCHES) {
         const searches = toSearch.splice(0, NUM_CONCURRENT_SEARCHES);
         const promises = searches.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
@@ -97,14 +101,14 @@ const race = async (start, destination) => {
         results.forEach((ts) => {
             searched.set(ts.title, ts);
 
-            if (ts.searchNext.some((title) => title === destination)) {
+            if (ts.searchNext.some((title) => title === end)) {
                 lastTitle = ts.title;
             } else {
                 ts.searchNext.forEach((next) => {
                     const parents = [...ts.parents];
                     parents.push(ts.title);
                     if (toSearch.length < NUM_MAX_SEARCHES) {
-                        toSearch.push(new TitleSearch(start, next, parents, ts.destination));
+                        toSearch.push(new TitleSearch(start, next, parents, ts.end));
                     }
                 });
             }
@@ -123,5 +127,7 @@ const race = async (start, destination) => {
 module.exports = {
     _selectTitles,
     _search,
+    _getJourney,
+
     race
 };

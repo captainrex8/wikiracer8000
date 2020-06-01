@@ -4,8 +4,21 @@ Wikiracer takes a starting page and an end page (as a page title) and successful
 
 ## High-level architecture overview
 
+### Arch for the racing
+
+e.g. searches and queues and parallel calls
+
+### Arch for the application
+
+e.g. layers and express middleware and request handling and component diagram
+
+### Arch for error handling and logging
+
+e.g. error handling middle ware / app level error handling and logs accompanied with it
 
 ## What the code does
+
+e.g. Flow diagram and stuff
 
 
 ## Instructions for how to run your Wikiracer
@@ -37,7 +50,7 @@ Unfortunately, I did not have time to build a UI to interact with the primary ra
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{"from":"Giant sloth","to":"Sloth"}' \
+  --data '{"start":"Giant sloth","end":"Sloth"}' \
   http://localhost:8089/api/v1/race
 ```
 
@@ -51,12 +64,12 @@ Now you've completed the application start up sanity check. You could start raci
 
 ```
 {
-    "from": "starting title",
-    "to": "destionation title"
+    "start": "starting title",
+    "end": "destionation title"
 }
 ```
 
-`from` represents the wiki title you would like to start racing from and `to` represents the wiki title you would like the race to end at. Here's the Giant sloth to Sloth example using Postman:
+`start` is the wiki title you would like to start racing from and `end` is the wiki title you would like the race to end at. Here's the Giant sloth to Sloth example using Postman:
 
 ![Postman](docs/postman1.png)
 
@@ -105,6 +118,31 @@ The more relevant log entries are the last two lines. These are race progress lo
 
 ## Strategies you tried
 
-
+Look into May 30/31 stuff
 
 ## How long you spent on each part of the project
+
+May 28 – 4 hours
+TODO:
+Understanding problem scope, research APIs: MediaWiki API, Design, scaffolding, setting up dev environment.
+May 29 – 2 hours
+Play around with the MediaWiki API and see its capabilities. Implement first draft client. Design and test out a first-take solution that works.
+May 30 – 4 hours
+TODO: 
+Test it out: Brute force pick first title go depth first search all the way. - DOESN’T WORK
+Is there a way to query linked titles using keyword/prefix? - NOPE
+If not, we could retrieve all the links and search keyword - DONE
+If not found, maybe we could look up the category/topics for the keyword and search – DOESN’T WORK
+If nothing related, then just either randomly pick 1 or pick first one - DONE
+May 31 – 6 hours
+TODO:
+Wrap up first implementation of the racer in monolith design.
+Test it out: Pick 5 random starting points and pick a random page for each subsequent linked pages. - didn’t work as planned
+Test it out: Fan out and search in binary tree fashion. For each page, randomly pick 2 linked pages – didn’t work as planned
+Test it out: Randomly pick configurable number of links and start going through each one and queuing same amount of links for each page. - The approach was able to return result in a reasonable amount of time a couple times. However, it is not reproducible on a consistent manner.
+
+Several issues:
+search taking longer than expected and timeout/need to convert to a job
+need to handle when we hit a dead end-to-end
+need to parallelize the seed calls
+need to handle where we are only selecting pages starting with numbers

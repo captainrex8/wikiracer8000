@@ -3,39 +3,39 @@
 const wikiracer = require('../services/wiki-racer');
 
 const post = async (req, res, next) => {
-    const { from, to } = req.body;
+    const { start, end } = req.body;
 
     try {
-        if (!from) {
+        if (!start) {
             res.status(400).json({
-                error: '\'from\' cannot be empty'
+                error: '\'start\' cannot be empty'
             });
             return;
         }
     
-        if (!to) {
+        if (!end) {
             res.status(400).json({
-                error: '\'to\' cannot be empty'
+                error: '\'end\' cannot be empty'
             });
             return;
         }
 
-        const fromTitle = String(from);
-        const toTitle = String(to);
+        const startTitle = String(start);
+        const endTitle = String(end);
 
-        if (fromTitle.toLowerCase() === toTitle.toLowerCase()) {
+        if (startTitle.toLowerCase() === endTitle.toLowerCase()) {
             res.status(400).json({
-                error: '\'from\' and \'to\' cannot be the same'
+                error: '\'start\' and \'end\' cannot be the same'
             });
             return;
         }
 
-        const journey = await wikiracer.race(fromTitle, toTitle);
+        const journey = await wikiracer.race(startTitle, endTitle);
     
         res.json({
             data: {
-                fromTitle,
-                toTitle,
+                startTitle,
+                endTitle,
                 message: journey.length ? 'race complete!' : 'race failed :(',
                 journey
             }
