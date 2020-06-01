@@ -23,6 +23,13 @@ const post = async (req, res, next) => {
         const fromTitle = String(from);
         const toTitle = String(to);
 
+        if (fromTitle.toLowerCase() === toTitle.toLowerCase()) {
+            res.status(400).json({
+                error: '\'from\' and \'to\' cannot be the same'
+            });
+            return;
+        }
+
         const result = await wikiracer.race(fromTitle, toTitle);
     
         res.json({

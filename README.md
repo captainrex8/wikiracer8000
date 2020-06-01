@@ -30,7 +30,7 @@ curl --header "Content-Type: application/json" \
 
 If the application is running successfully, you should get a json response like this: `{"data":{"message":"I am still alive!"}}`
 
-Unfortunately, I did not have time to build a UI to interact with the primary race API. I'd recommend using [Postman](https://www.postman.com/downloads/). If not, the following curl command would initiate the search from Giant sloth to Sloth:
+Unfortunately, I did not have time to build a UI to interact with the primary race API. I'd recommend using [Postman](https://www.postman.com/downloads/) for interactions with the wikiracer api endpoints. If not, the following curl command would initiate the search from Giant sloth to Sloth:
 
 ```
 curl --header "Content-Type: application/json" \
@@ -40,6 +40,40 @@ curl --header "Content-Type: application/json" \
 ```
 
 You should get the follwoing response given the wiki pages hasn't changed much: `{"data":{"fromTitle":"Giant sloth","toTitle":"Sloth","path":["Giant sloth","Ground sloth","Sloth"]}}`
+
+Now you've completed the application start up sanity check. You could start racing by changing the POST body and send it to the `race` end point. There are just 2 required parameters:
+
+```
+{
+    "from": "starting title",
+    "to": "destionation title"
+}
+```
+
+`from` represents the wiki title you would like to start racing from and `to` represents the wiki title you would like the race to end at. Here's the Giant sloth to Sloth example using Postman:
+
+![Postman](docs/postman1.png)
+
+At the same time, you could check the running container for log outputs. Here's the container log output from the Giant sloth to Sloth example:
+
+![Docker](docs/docker1.png)
+
+In the above example, the first 2 log entries prefixed with info are from application start up.
+
+The more relevant log entries are the last two lines. These are race progress logs. They have structure like this:
+
+`[log level]: [searchId] [parent] -> [current title] | [duration] | [search queue items]`
+
+`log level` - For race progress logs, these will always be info.
+
+`searchId` - The id for a particular linked titles search.
+
+`parent` - The parent title where the current title search originates from.
+
+`duration` - Duration of the current title search. This contains the time to check if current title is directly linked with the destionation. Plus, if needed, the time to retrieve more linked titles for further searches.
+
+`search queue items` - The number of pending title searches yet to be performed.
+
 
 ## References
 
