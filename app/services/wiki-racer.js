@@ -80,22 +80,24 @@ const _getJourney = (searched, lastTitle) => {
 };
 
 const race = async (start, end) => {
-    const searched = new Map();
-
     const NUM_CONCURRENT_SEARCHES = config.get('settings.numConcurrentSearches');
     const NUM_MAX_SEARCHES = config.get('settings.numMaxSearches');
+    
+    const searched = new Map();
+    const queue = [];
 
     let searchId = 0;
     let lastTitle = '';
-    let toSearch = [new TitleSearch(start, start, [], end)];
+
+    queue.push(new TitleSearch(start, start, [], end));
 
     // NOTE: The race will stop either:
     //       - We are at the last title before the destionation
     //       - There is nothing more to search (complete dead end everywhere)
     //       - We searched long enough and it is time to call it quit
-    while(!lastTitle && toSearch.length && searchId < NUM_MAX_SEARCHES) {
-        const searches = toSearch.splice(0, NUM_CONCURRENT_SEARCHES);
-        const promises = searches.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
+    while(!lastTitle && queue.length && searchId < NUM_MAX_SEARCHES) {
+        const batch = queue.splice(0, NUM_CONCURRENT_SEARCHES);
+        const promises = batch.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
         const results = await Promise.all(promises);
 
         results.forEach((ts) => {
@@ -107,13 +109,13 @@ const race = async (start, end) => {
                 ts.searchNext.forEach((next) => {
                     const parents = [...ts.parents];
                     parents.push(ts.title);
-                    if (toSearch.length < NUM_MAX_SEARCHES) {
-                        toSearch.push(new TitleSearch(start, next, parents, ts.end));
+                    if (queue.length < NUM_MAX_SEARCHES) {
+                        queue.push(new TitleSearch(start, next, parents, ts.end));
                     }
                 });
             }
 
-            _logSearchResult(searchId, ts, toSearch.length);
+            _logSearchResult(searchId, ts, queue.length);
 
             searchId++;
         });

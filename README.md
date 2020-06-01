@@ -18,6 +18,10 @@ e.g. error handling middle ware / app level error handling and logs accompanied 
 
 ## What the code does
 
+e.g. configs
+
+e.g. concurrency parameters 
+
 e.g. Flow diagram and stuff
 
 
