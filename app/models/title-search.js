@@ -1,7 +1,7 @@
 'use strict';
 
 class TitleSearch {
-    constructor(start, title, parent, destination) {
+    constructor(start, title, parents, destination) {
         if (!start) {
             throw new Error('start cannot be empty');
         }
@@ -16,7 +16,7 @@ class TitleSearch {
         
         this.start = start;
         this.title = title;
-        this.parent = parent;
+        this.parents = parents;
         this.destination = destination;
         this.duration = -1;
         this.searchNext = [];

@@ -4,7 +4,7 @@ jest.mock('../../../app/logger');
 jest.mock('../../../app/services/mediawiki');
 
 // Test target
-const racer = require('../../../app/services/racer');
+const racer = require('../../../app/services/wiki-racer');
 
 describe('racer', () => {
     describe('_selectTitles', () => {

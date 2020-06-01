@@ -1,6 +1,6 @@
 'use strict';
 
-const racer = require('../services/racer');
+const wikiracer = require('../services/wiki-racer');
 
 const post = async (req, res, next) => {
     const { from, to } = req.body;
@@ -23,7 +23,7 @@ const post = async (req, res, next) => {
         const fromTitle = String(from);
         const toTitle = String(to);
 
-        const result = await racer.start(fromTitle, toTitle);
+        const result = await wikiracer.race(fromTitle, toTitle);
     
         res.json({
             data: {

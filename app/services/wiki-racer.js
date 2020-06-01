@@ -61,34 +61,22 @@ const _logSearchResult = (searchId, ts, numInQueue) => {
         idStr = 'start';
     }
 
-    const parent = ts.parent.length ? ts.parent[ts.parent.length - 1] : '';
+    const parent = ts.parents.length ? ts.parents[ts.parents.length - 1] : '';
 
     logger.info(`${idStr} ${parent} -> ${ts.title} | ${ts.duration}ms | Queued: ${numInQueue}`);
 }
 
-const _getJourney = (searched, start, startAt) => {
-    const journey = [];
-    let ts = searched.get(startAt);
-    while(ts) {
-        journey.unshift(ts.title);
-        if (ts.title === start) break;
-        ts = searched.get(ts.parent);
-    }
-
-    return journey;
-};
-
-const start = async (start, destination) => {
+const race = async (start, destination) => {
     const searched = new Map();
 
     const NUM_CONCURRENT_SEARCHES = config.get('settings.numConcurrentSearches');
     const NUM_MAX_SEARCHES = config.get('settings.numMaxSearches');
 
     let searchId = 0;
-    let destionationParent = '';
+    let destinationParent = '';
     let toSearch = [new TitleSearch(start, start, [], destination)];
 
-    while(!destionationParent && toSearch.length && searchId < NUM_MAX_SEARCHES) {
+    while(!destinationParent && toSearch.length && searchId < NUM_MAX_SEARCHES) {
         const searches = toSearch.splice(0, NUM_CONCURRENT_SEARCHES);
         const promises = searches.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
         const results = await Promise.all(promises);
@@ -97,10 +85,10 @@ const start = async (start, destination) => {
             searched.set(ts.title, ts);
 
             if (ts.searchNext.some((title) => title === destination)) {
-                destionationParent = ts.title;
+                destinationParent = ts.title;
             } else {
                 ts.searchNext.forEach((next) => {
-                    const parents = ts.parent.slice();
+                    const parents = [...ts.parents];
                     parents.push(ts.title);
                     if (toSearch.length < NUM_MAX_SEARCHES) {
                         toSearch.push(new TitleSearch(start, next, parents, ts.destination));
@@ -114,15 +102,18 @@ const start = async (start, destination) => {
         });
     }
 
-    const journey = destionationParent ? searched.get(destionationParent).parents : [];
+    let path = [];
+    if (destinationParent) {
+        path = [...searched.get(destinationParent).parents];
+        path.push(destinationParent);
+        path.push(destination);
+    }
 
-    return { journey };
+    return { path };
 };
 
 module.exports = {
     _selectTitles,
     _search,
-    _getJourney,
-
-    start
+    race
 };
