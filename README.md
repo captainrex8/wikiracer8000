@@ -8,13 +8,27 @@ Wikiracer takes a starting page and an end page (as a page title) and successful
 
 ![High level architecture](docs/wikiracer8000_architecture.png)
 
-Concepts: Web API controllers, Wiki racer (job processor, coordinator), queue and search workers (scalable part).
+Current iteration of the design consists of the following concepts:
+
+`API Controllers` - User facing API endpoints to accept incoming requests and to initiate a wiki race.
+
+`Wiki Racer` - Primary component handling life-cycle of a race. It will initiate the race, take searches off the queue and spawn search workers. It also handles search parallelism, process search results and stop/complete the race.
+
+`Search Workers` - Each worker is focused on one thing: check if the assigned title is directly linked to the end title. If not, pick more titles to search and queue the additional searches. The selection strategy on what titles to search next is essential and has impacts on race time.
+
+`Queue` - Additional searches to be performed will be put onto the queue for consumption by the Wiki Racer.
 
 ### Application Layers
 
 ![High level architecture](docs/wikiracer8000_app_layers.png)
 
-Multi-tier design for the web application
+The components are organized using concepts from multi-tiered deisgn. There are layers addressing crosscutting concerns and components related to it are put under such layer.
+
+`API` - This is where all the controllers and express middleware modules are located.
+
+`Services` - Contains all the business logic / processer modules.
+
+`Data Providers` - All the API clients, database repositories (if any) and cache clientss (if any) are located.
 
 ## Instructions for how to run your Wikiracer
 
