@@ -114,13 +114,11 @@ Once the user submit a request, the race will kick off by having the wikirace mo
 
 ![Code flow 2](docs/wikiracer8000_codeflow2.png)
 
-Then launch a search worker to querying MediaWiki API for all linked titles to the starting title. Once we got the titles, the search worker will use the selection module to randomly pick a number of titles to search next and put them on the queue.
+The racer will then launch a search worker to query MediaWiki API for all linked titles to the starting title. Once we got the titles, the search worker will use the selection module to randomly pick a number of titles to search next and put them on the queue.
 
 ![Code flow 3](docs/wikiracer8000_codeflow3.png)
 
-The wikirace module will then keep taking a number of searches off the queue at a time and launch search workers to look for the end title.
-
-The race will stop on either one of the following conditions:
+The wikirace module will continue to searches of the queued titles at the configured parallelization level. The race will stop on either one of the following conditions:
 - We've done the race and are now at the last title before the end
 - There is no more queued searches (complete dead end everywhere)
 - We searched enough pages and it is time to call it quit.
@@ -302,14 +300,20 @@ Other than parallelizing the searches, I also experimented several approaches on
 ## Issues and Iteration 2
 
 ### Issues:
-- Application is not usable :(
+- Application is not usable on the sample query Tennessee -> Sloth :(
+- Search taking longer than expected. Usual response time is 1.5 minutes for 1000 title queries. Not an acceptable time for API responses.
 - It is a monolith!!
-- Search taking longer than expected. Usual response time is 1.5 minutes. Not acceptable for API responses.
 - Sometimes the application can go into infinite loop among several titles.
 - No authentication/throttling to for the api
 - No friendly UI :(
 
 ### Iteration 2:
+- Evolve architecture to split out API and racer+search workers.
+
+![Postman](docs/wikiracer8000_Iteration2.png)
+
+- Fix many edge cases.
+- Optimize selection criteris.
 - Swagger API docs
-- UI and API authentication/throttling
-- Split out race creation and actual racing.
+- API authentication/throttling
+- UI!! :)

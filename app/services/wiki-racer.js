@@ -3,54 +3,7 @@
 const config = require('config');
 const logger = require('../logger');
 const TitleSearch = require('../models/title-search');
-const mediawiki = require('./mediawiki');
-
-const _selectTitles = (titles, numToSelect) => {
-    if (titles.length === 0) {
-        return [];
-    }
-
-    if (titles.length <= numToSelect * 1.5) {
-        return titles.slice(0, numToSelect);
-    }
-
-    const selected = [];
-    while(selected.length < numToSelect) {
-        const index = Math.floor(Math.random() * Math.floor(titles.length - 1));
-        const title = titles[index];
-
-        selected.push(title);
-    }
-
-    return selected;
-};
-
-const _search = async (titleSearch, numToSelect) => {
-    const { title, end } = titleSearch;
-
-    try {
-        const start = new Date();
-        const isLinkedToend = await mediawiki.isLinked(title, end);
-
-        if (isLinkedToend) {
-            titleSearch.searchNext.push(titleSearch.end);
-            const end = new Date();
-            titleSearch.duration = end - start;
-
-            return titleSearch;
-        } else {
-            const titles = await mediawiki.getAllLinkedTitles(title);
-
-            titleSearch.searchNext = [..._selectTitles(titles, numToSelect)];
-            const end = new Date();
-            titleSearch.duration = end - start;
-
-            return titleSearch;
-        }    
-    } catch (err) {
-        logger.error(err);
-    }
-};
+const searchWorker = require('./search-worker');
 
 const _logSearchResult = (searchId, ts, numInQueue) => {
     let idStr;
@@ -97,7 +50,7 @@ const race = async (start, end) => {
     //       - We searched long enough and it is time to call it quit
     while(!lastTitle && queue.length && searchId < NUM_MAX_SEARCHES) {
         const batch = queue.splice(0, NUM_CONCURRENT_SEARCHES);
-        const promises = batch.map((ts) => _search(ts, NUM_CONCURRENT_SEARCHES));
+        const promises = batch.map((ts) => searchWorker.search(ts, NUM_CONCURRENT_SEARCHES));
         const results = await Promise.all(promises);
 
         results.forEach((ts) => {
@@ -127,9 +80,6 @@ const race = async (start, end) => {
 };
 
 module.exports = {
-    _selectTitles,
-    _search,
     _getJourney,
-
     race
 };
