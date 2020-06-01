@@ -4,6 +4,11 @@ Wikiracer takes a starting page and an end page (as a page title) and successful
 
 ## High-level architecture 
 
+This web application is built with `Node.js v12` using JavaSCript with ES6 features. Some highlights of the packages used:
+- Web server / API functionality are enabled through the use of `express.js`.
+- Unit testing framework - `JEST`
+- Linter - `ESLint`
+
 ### Overview
 
 ![High level architecture](docs/wikiracer8000_architecture.png)
@@ -303,6 +308,7 @@ Other than parallelizing the searches, I also experimented several approaches on
 - Application is not usable on the sample query Tennessee -> Sloth :(
 - Search taking longer than expected. Usual response time is 1.5 minutes for 1000 title queries. Not an acceptable time for API responses.
 - It is a monolith!!
+- Low code coverage!!!
 - Sometimes the application can go into infinite loop among several titles.
 - No authentication/throttling to for the api
 - No friendly UI :(
@@ -315,5 +321,6 @@ Other than parallelizing the searches, I also experimented several approaches on
 - Fix many edge cases.
 - Optimize selection criteris.
 - Swagger API docs
+- 100% code coverage!!!
 - API authentication/throttling
 - UI!! :)
