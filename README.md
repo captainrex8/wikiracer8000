@@ -18,11 +18,13 @@ Current iteration of the design consists of the following concepts:
 
 `Queue` - Additional searches to be performed will be put onto the queue for consumption by the Wiki Racer.
 
+`MediaWikiApi` - Primary data provider for the race. External service.
+
 ### Application Layers
 
-![High level architecture](docs/wikiracer8000_app_layers.png)
+![Application layers](docs/wikiracer8000_app_layers.png)
 
-The components are organized using concepts from multi-tiered deisgn. There are layers addressing crosscutting concerns and components related to it are put under such layer.
+The components are organized using concepts from multi-tiered deisgn. There are layers addressing cross-cutting concerns and components related to it are put under such layer.
 
 `API` - This is where all the controllers and express middleware modules are located.
 
@@ -158,31 +160,60 @@ Configs are stored under the `config` folder. Each file represents a config for 
 
 ## Strategies you tried
 
-Look into May 30/31 stuff
+![Strategies](docs/wikiracer8000_strategies.png)
+
+### 1. Always pick first
+
+### 2. Breadth first
+
+### 3. Parallelized depth first
+
+### 4. Paralleized breadth first
+
+### 5. Paralleized breadth frist with randomization
 
 ## How long you spent on each part of the project
 
 May 28 – 4 hours
-TODO:
-Understanding problem scope, research APIs: MediaWiki API, Design, scaffolding, setting up dev environment.
+
+Understand problem scope, research APIs: MediaWiki API, Design, scaffolding, setting up dev environment.
+
 May 29 – 2 hours
+
 Play around with the MediaWiki API and see its capabilities. Implement first draft client. Design and test out a first-take solution that works.
-May 30 – 4 hours
-TODO: 
+
+May 30 – 6 hours
+
 Test it out: Brute force pick first title go depth first search all the way. - DOESN’T WORK
+
 Is there a way to query linked titles using keyword/prefix? - NOPE
+
 If not, we could retrieve all the links and search keyword - DONE
+
 If not found, maybe we could look up the category/topics for the keyword and search – DOESN’T WORK
+
 If nothing related, then just either randomly pick 1 or pick first one - DONE
-May 31 – 6 hours
-TODO:
+
+May 31 – 8 hours
+
 Wrap up first implementation of the racer in monolith design.
+
 Test it out: Pick 5 random starting points and pick a random page for each subsequent linked pages. - didn’t work as planned
+
 Test it out: Fan out and search in binary tree fashion. For each page, randomly pick 2 linked pages – didn’t work as planned
+
 Test it out: Randomly pick configurable number of links and start going through each one and queuing same amount of links for each page. - The approach was able to return result in a reasonable amount of time a couple times. However, it is not reproducible on a consistent manner.
 
-Several issues:
-search taking longer than expected and timeout/need to convert to a job
-need to handle when we hit a dead end-to-end
-need to parallelize the seed calls
-need to handle where we are only selecting pages starting with numbers
+June 01 - 4 hours
+
+Documentations and recording demo
+
+## Issues and Iteration 2
+
+### Issues:
+- Application is not usable :(
+- It is a monolith!!
+- Search taking longer than expected. Usual response time is 1.5 minutes. Not acceptable for API responses.
+- Sometimes the application can go into infinite loop among several titles.
+- No authentication/throttling to for the api
+- No friendly UI :(
