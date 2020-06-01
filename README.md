@@ -2,30 +2,19 @@
 
 Wikiracer takes a starting page and an end page (as a page title) and successfully figure out how to traverse from one to the other (or tell the user if there isn’t a path). The output would be a list of pages on the path, as well as the total elapsed time to run.
 
-## High-level architecture overview
+## High-level architecture 
+
+### Overview
 
 ![High level architecture](docs/wikiracer8000_architecture.png)
 
-### Arch for the racing
+Concepts: Web API controllers, Wiki racer (job processor, coordinator), queue and search workers (scalable part).
 
-e.g. searches and queues and parallel calls
+### Application Layers
 
-### Arch for the application
+![High level architecture](docs/wikiracer8000_app_layers.png)
 
-e.g. layers and express middleware and request handling and component diagram
-
-### Arch for error handling and logging
-
-e.g. error handling middle ware / app level error handling and logs accompanied with it
-
-## What the code does
-
-e.g. configs
-
-e.g. concurrency parameters 
-
-e.g. Flow diagram and stuff
-
+Multi-tier design for the web application
 
 ## Instructions for how to run your Wikiracer
 
@@ -35,7 +24,7 @@ To start, obtain the source code from the following repository through git clone
 
 Make sure you have *docker*, *docker-compose* and *make*.
 
-### Sanity check
+### Quick smoke test
 
 The first step is to run the tests by running `make test`. This will build the test container and run the unit tests.
 
@@ -66,7 +55,7 @@ You should get the follwoing response given the wiki pages hasn't changed much: 
 
 #### Client side
 
-Now you've completed the application start up sanity check. You could start racing by changing the POST body and send it to the `race` end point. There are just 2 required parameters:
+Now you've completed the application start up check. You could start racing by changing the POST body and send it to the `race` end point. There are just 2 required parameters:
 
 ```
 {
@@ -101,10 +90,17 @@ The more relevant log entries are the last two lines. These are race progress lo
 
 `search queue items` - The number of pending title searches yet to be performed.
 
+## What the code does
+
+e.g. Flow diagram and stuff
+
+### Arch for error handling and logging
+
+e.g. error handling middle ware / app level error handling and logs accompanied with it
 
 ## References
 
-*make* commands:
+### *make* commands:
 
 `make test` - This will build and launch the docker container to run the jest unit tests
 
@@ -114,13 +110,37 @@ The more relevant log entries are the last two lines. These are race progress lo
 
 `make stop` - This will stop the docker container using docker-compose down
 
-*yarn/npm* script targets:
+### *yarn/npm* script targets:
 
 `yarn start` - This will start the application on your host machine
 
 `yarn lint` - This will check your code style against ESLint rules
 
 `yarn test` - This will check code style first and then run unit tests with code coverage report
+
+### *configurations*:
+
+Configs are stored under the `config` folder. Each file represents a config for a particular environment. Environment value is determined by the `NODE_ENV` environment variable. Currently, there are 3 files:
+
+`default.json` - Provide base configuration for any environment.
+
+`development.json` - Config values for development environment.
+
+`test.json` - Config values when running unit tests.
+
+#### Configuration reference
+
+|config                           | description                                               | type    |
+|---------------------------------|-----------------------------------------------------------|---------|
+|serviceName                      | name of the application                                   | string  |
+|settings.numConcurrentSearches   | maximum number of search workers to query MediaWiki API   | number  |
+|settings.numMaxSearches          | maximum number of queries before stopping the race        | number  |
+|logger.level                     | minimum level needed for a log entry to be logged         | string  |
+|express.port                     | port number for the http server                           | string  |
+|express.maxRequestSize           | maximum amout of data the application will accept         | string  |
+|mediaWikiApi.baseUrl             | base URL for the MediaWiki API query end point            | string  |
+|mediaWikiApi.timeoutInSeconds    | http request timeout in seconds                           | number  |
+
 
 ## Strategies you tried
 

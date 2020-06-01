@@ -9,7 +9,7 @@
     },
     "express": {
         "port": 8089,
-        "maxRequestSize": "50mb"
+        "maxRequestSize": "1mb"
     },
     "mediaWikiApi": {
         "baseUrl": "https://en.wikipedia.org/w/api.php",

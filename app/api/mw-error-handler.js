@@ -1,7 +1,7 @@
 'use strict';
 
 const uuid = require('uuid');
-const logger = require('./logger');
+const logger = require('../logger');
 
 const errorHandler = (err, req, res, next) => {
     if (res.headerSent) {

@@ -1,8 +1,8 @@
 'use strict';
 
 const express = require('express');
-const ping = require('./controllers/ping');
-const race = require('./controllers/race');
+const ping = require('./ping');
+const race = require('./race');
 
 const router = express.Router();
 

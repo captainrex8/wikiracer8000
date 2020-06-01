@@ -15,9 +15,8 @@ const logger = winston.createLogger({
     ]
 });
 
+// NOTE: Serialize js object to JSON to avoid being logged as [Object object]
 const log = (level, item) => logger[level](typeof item === 'string' ? item : JSON.stringify(item, null, 2));
-// const log = (level, item) => console.log(typeof item === 'string' ? item : JSON.stringify(item, null, 2));
-// const log = (level, item) => console.log(item);
 
 const debug = (item) => log('debug', item);
 const info = (item) => log('info', item);

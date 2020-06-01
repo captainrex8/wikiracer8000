@@ -7,8 +7,8 @@ const config = require('config');
 const helmet = require('helmet');
 const compression = require('compression');
 const logger = require('./app/logger');
-const routes = require('./app/routes');
-const errorHandlerMiddleware = require('./app/mw-error-handler');
+const routes = require('./app/api/routes');
+const errorHandlerMiddleware = require('./app/api/mw-error-handler');
 
 const server = express();
 const MAX_REQUEST_SIZE = config.get('express.maxRequestSize');
