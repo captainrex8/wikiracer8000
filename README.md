@@ -117,7 +117,7 @@ The more relevant log entries are the last two lines. These are race progress lo
 
 ![Code flow 1](docs/wikiracer8000_codeflow1.png)
 
-Once the user submit a request, the race will kick off by having the wikirace module putting the first title search onto the search queue.
+Once the user submit a request, the race will kick off by having the wikiracer module putting the first title search onto the search queue.
 
 ![Code flow 2](docs/wikiracer8000_codeflow2.png)
 
@@ -125,7 +125,7 @@ The racer will then launch a search worker to query MediaWiki API for all linked
 
 ![Code flow 3](docs/wikiracer8000_codeflow3.png)
 
-The wikirace module will continue to searches of the queued titles at the configured parallelization level. The race will stop on either one of the following conditions:
+The wikiracer module will continue to launch search workers for queued titles at the configured parallelization level. The race will stop on either one of the following conditions:
 - We've done the race and are now at the last title before the end
 - There is no more queued searches (complete dead end everywhere)
 - We searched enough pages and it is time to call it quit.
@@ -247,11 +247,11 @@ This approach start out with a select number of linked titles and then launch th
 
 ### 4. Paralleized breadth first
 
-This approach is similar to No. 2. Instead of going through titles one by one, I search X titles at a time and search directly linked titles first before going to next level. Since amount of parallelization is configurable, I managed to go through large number of titles faster. However, due to the sheer number of titles even at level 1, the race still end up going no where. Not to mention the levels further down will exponentially more titles. This approach doesn't get us far enough fast enough from the starting point.
+This approach is similar to No. 2. Instead of going through titles one by one, I search X titles at a time and search directly linked titles first before going to next level. Since amount of parallelization is configurable, I managed to go through large number of titles faster. However, due to the sheer number of titles even at level 1, the race still end up going no where. Not to mention the levels further down will have exponentially more titles. This approach doesn't get us far enough fast enough from the starting point.
 
 ### 5. Paralleized breadth first with randomization
 
-This is a modified approach similar to No. 4. Instead of queueing ALL linked titles for searching, the race now randomly pick X titles and queue them. This improves on the distance traversed within a given time. This is the current appraoch and by luck I was able to go from (Tennessee -> Sloth) a couple of times. Unfortunately, due to the random nature, the race is not consisten and has a lot of variability.
+This is a modified approach similar to No. 4. Instead of queueing ALL linked titles for searching, the race now randomly pick X titles and queue them. This improves on the distance traversed within a given time. This is the current appraoch and by luck I was able to go from (Tennessee -> Sloth) a couple of times. Unfortunately, due to the random nature, the race results are not consistent nor deterministic.
 
 ### Other strategies tried
 
@@ -311,7 +311,7 @@ Other than parallelizing the searches, I also experimented several approaches on
 - Search taking longer than expected. Usual response time is 1.5 minutes for 1000 title queries. Not an acceptable time for API responses.
 - It is a monolith!!
 - Low code coverage!!!
-- Sometimes the application can go into infinite loop among several titles.
+- The application can go into infinite loop among several interlinking titles.
 - No authentication/throttling to for the api
 - No friendly UI :(
 
