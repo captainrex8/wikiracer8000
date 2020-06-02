@@ -4,7 +4,7 @@ Wikiracer takes a starting page and an end page (as a page title) and successful
 
 ## High-level architecture 
 
-This web application is built with `Node.js v12` using JavaSCript with ES6 features. Some highlights of the packages used:
+This web application is built with `Node.js v12` using JavaScript with ES6 features. Some highlights of the packages used:
 - Web server / API functionality are enabled through the use of `express.js`.
 - Unit testing framework - `JEST`
 - Linter - `ESLint`
