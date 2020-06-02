@@ -5,6 +5,10 @@ const select = (titles, numToSelect) => {
         return [];
     }
 
+    // If the size of available titles is too close to the number of titles
+    // we would like to select, it may take a long time to select. Hence,
+    // we won't randomly pick titles unless the sample is 1.5x times larger.
+    // TODO: Need better way to select randomly.
     if (titles.length <= numToSelect * 1.5) {
         return titles.slice(0, numToSelect);
     }

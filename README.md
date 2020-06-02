@@ -47,7 +47,7 @@ Make sure you have *docker*, *docker-compose* and *make*.
 
 ### Quick smoke test
 
-The first step is to run the tests by running `make test`. This will build the test container and run the unit tests.
+The first step is to run the tests by running `make test`. This will build the test container and run the unit tests. [Here's a video demo for cloning the repo and run the test container](https://www.panoridge.com/mXu7NDgLuq/make_test.mp4)
 
 Then you could launch the application container by running `make build-run`.
 
@@ -88,6 +88,8 @@ Now you've completed the application start up check. You could start racing by c
 `start` is the wiki title you would like to start racing from and `end` is the wiki title you would like the race to end at. Here's the Giant sloth to Sloth example using Postman:
 
 ![Postman](docs/postman1.png)
+
+[Here's a video demo for running a *failed* race from Tennessee to Sloth](https://www.panoridge.com/mXu7NDgLuq/make_test.mp4)
 
 #### Server side
 
