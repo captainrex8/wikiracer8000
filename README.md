@@ -89,7 +89,7 @@ Now you've completed the application start up check. You could start racing by c
 
 ![Postman](docs/postman1.png)
 
-[Here's a video demo for running a *failed* race from Tennessee to Sloth](https://www.panoridge.com/mXu7NDgLuq/make_test.mp4)
+[Here's a video demo for running a *failed* race from Tennessee to Sloth](https://www.panoridge.com/mXu7NDgLuq/make_buildrun.mp4)
 
 #### Server side
 
