@@ -2,7 +2,7 @@
     "serviceName": "wikiracer8000",
     "settings": {
         "numConcurrentSearches": 50,
-        "numMaxSearches": 1000
+        "numMaxSearches": 10000
     },
     "logger": {
         "level": "info"

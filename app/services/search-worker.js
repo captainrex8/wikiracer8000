@@ -4,6 +4,24 @@ const logger = require('../logger');
 const mediawiki = require('./mediawiki');
 const titleSelector = require('./title-selector');
 
+const find = async (title, target) => {
+    const isLinkedToend = await mediawiki.isLinked(title, target);
+
+    if (isLinkedToend) {
+        return {
+            isFound: true,
+            linkedTitles: []
+        };
+    }
+
+    let titles = await mediawiki.getAllLinkedTitles(title);
+
+    return {
+        isFound: false,
+        linkedTitles: titles
+    }
+};
+
 const search = async (titleSearch, numToSelect) => {
     const { title, end } = titleSearch;
 
@@ -35,5 +53,6 @@ const search = async (titleSearch, numToSelect) => {
 };
 
 module.exports = {
+    find,
     search
 };

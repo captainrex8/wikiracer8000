@@ -1,5 +1,6 @@
 'use strict';
 
+const logger = require('../logger');
 const wikiracer = require('../services/wiki-racer');
 
 const post = async (req, res, next) => {
@@ -30,14 +31,15 @@ const post = async (req, res, next) => {
             return;
         }
 
-        const journey = await wikiracer.race(startTitle, endTitle);
+        const startTime = new Date();
+        await wikiracer.race(startTitle, endTitle);
+        const endTime = new Date();
+        logger.info(endTime - startTime);
     
         res.json({
             data: {
                 startTitle,
-                endTitle,
-                message: journey.length ? 'race complete!' : 'race failed :(',
-                journey
+                endTitle
             }
         });
     } catch (err) {
