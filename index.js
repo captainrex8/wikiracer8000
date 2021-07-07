@@ -2,6 +2,8 @@
 
 const pacakge = require('./package.json');
 const express = require('express');
+const cors = require('cors');
+const csurf = require('csurf'); // eslint-disable-line no-unused-vars
 const bodyParser = require('body-parser');
 const config = require('config');
 const helmet = require('helmet');
@@ -47,6 +49,7 @@ const makeErrorSerializable = () => {
 const initServer = (port) => {
     server.use(helmet());
     server.use(compression({ threshold: 0 }));
+    server.use(cors()); // Add restrictions when there's UI
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(bodyParser.json({ limit: MAX_REQUEST_SIZE }));
     server.use('/api/v1', routes);
