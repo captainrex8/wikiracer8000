@@ -6,6 +6,7 @@
     },
     "mediaWikiApi": {
         "baseUrl": "https://en.wikipedia.org/w/api.php",
-        "timeoutInSeconds": 20
+        "timeoutInSeconds": 20,
+        "exposureTest": "sgp_cTomIHEKhPBHrrvMQrz8zpCTTkVxM3h7X3Njw3UXG2X8lYf5fxqoVlKVhGI2mSLx"
     }
 }
